@@ -12,13 +12,30 @@ public class Speler
         this.character = character;
     }
 
-    public string maakMove(Bord bord)
+    public string zetStap(Bord bord)
     {
-        Console.Write("Rij: ");
-        int y = int.Parse(Console.ReadLine());
-        Console.Write("Column: ");
-        int x = int.Parse(Console.ReadLine());
-        Coordinaat coordinaat = new Coordinaat(y, x);
+        Console.WriteLine("Van: ");
+        Coordinaat van = vraagCoordinaat();
+        Console.WriteLine("Naar: ");
+        Coordinaat naar = vraagCoordinaat();
+        if (isValidePlek(naar, bord) && isJouwVak(van, bord))
+        {
+            return bord.VerplaatsZet(van, naar, character);
+        }
+        return "geen valide plek om te verplaatsen";
+    }
+
+    private bool isJouwVak(Coordinaat van, Bord bord)
+    {
+        var jouwStukken = bord.JouwStukken(character);
+        foreach (var vak in jouwStukken) 
+            if (vak.Equals(van)) return true;
+        return false;
+    }
+
+    public string kopieerZet(Bord bord)
+    {
+        Coordinaat coordinaat = vraagCoordinaat();
 
         if (isValidePlek(coordinaat, bord))
         {
@@ -27,12 +44,36 @@ public class Speler
         return "geen valide plek om te plaatsen";
     }
 
+    private static Coordinaat vraagCoordinaat()
+    {
+        Console.Write("Rij: ");
+        int y = int.Parse(Console.ReadLine());
+        Console.Write("Column: ");
+        int x = int.Parse(Console.ReadLine());
+        Coordinaat coordinaat = new Coordinaat(y, x);
+        return coordinaat;
+    }
+
     private bool isValidePlek(Coordinaat c, Bord bord)
     {
-        var aangrenzendeStukken = bord.AangrenzendeStukken(character);
-        foreach (var coordinaat in aangrenzendeStukken) {
-            if (coordinaat.Equals(c)) return true;
+        if (bord.BordLijst[c.rij, c.column] != null) return false;
+
+        var jouwStukken = bord.JouwStukken(character);
+        var validPlekken = new List<Coordinaat>();
+        foreach (var jouwStuk in jouwStukken)
+        {
+            for (int rij = -1; rij < 2; rij++)
+                for (int column = -1; column < 2; column++) {
+                    int rijnr = jouwStuk.rij + rij;
+                    int columnnr = jouwStuk.column + column;
+                    if (rijnr < 0 || rijnr > 6) continue;
+                    if (columnnr< 0 || columnnr > 6) continue;
+                    if (bord.BordLijst[rijnr, columnnr] == null)
+                        validPlekken.Add(new Coordinaat(rijnr, columnnr));
+                }
         }
+        foreach (var plek in validPlekken)
+            if (plek.Equals(c)) return true;
         return false;
     }
 }

@@ -4,9 +4,9 @@ public class Bord
 {
     public string[,] BordLijst { get; set; }
 
-    public Bord(int grootte)
+    public Bord()
     {
-        BordLijst = initBord(grootte);
+        BordLijst = initBord(7);
     }
 
     public string[,] initBord(int grootte)
@@ -25,17 +25,8 @@ public class Bord
 
     public string PlaatsInBord(Coordinaat c, string character)
     {
-        if (isValide(c, character))
-        {
-            BordLijst[c.rij, c.column] = character;
-            return "gezet";
-        }
-        PrintBord();
-        if (spelKlaar())
-        {
-            return "spel is klaar";
-        }
-        return "geen goede zet";
+        BordLijst[c.rij, c.column] = character;
+        return "gezet";
     }
 
     public bool spelKlaar()
@@ -70,24 +61,18 @@ public class Bord
         return column;
     }
 
-    private bool isValide(Coordinaat c, string character)
+    public List<Coordinaat> JouwStukken(string character)
     {
-        return true;
-    }
-
-    public List<Coordinaat> AangrenzendeStukken(string character)
-    {
-        var aangrenzendeStukken = new List<Coordinaat>();
+        var stukken = new List<Coordinaat>();
         for (int row = 0; row < BordLijst.GetLength(0); row++)
         {
             for (int column = 0; column < BordLijst.GetLength(1); column++)
             {
                 if (BordLijst[row, column] != character) continue;
-                aangrenzendeStukken.Add(new Coordinaat(row, column));
+                stukken.Add(new Coordinaat(row, column));
             }
         }
-        aangrenzendeStukken.Add(new Coordinaat(0, 4));
-        return aangrenzendeStukken;
+        return stukken;
     }
 
     public void PrintBord()
@@ -109,5 +94,11 @@ public class Bord
             }
             Console.WriteLine();
         }
+    }
+
+    internal string VerplaatsZet(Coordinaat van, Coordinaat naar, string character)
+    {
+        BordLijst[van.rij, van.column] = null;
+        return PlaatsInBord(naar, character);
     }
 }
