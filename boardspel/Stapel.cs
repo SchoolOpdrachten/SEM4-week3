@@ -7,7 +7,7 @@ public class Stapel<T>
         bovenste = item;
         return item;
     }
-    public T pak()
+    public T? pak()
     {
         if (bovenste == null)
             throw new Exception("Stapel is leeg");
