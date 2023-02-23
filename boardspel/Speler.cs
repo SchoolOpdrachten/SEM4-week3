@@ -70,15 +70,9 @@ public class Speler
         var validPlekken = new List<Coordinaat>();
         foreach (var jouwStuk in jouwStukken)
         {
-            for (int rij = -1; rij < 2; rij++)
-                for (int column = -1; column < 2; column++) {
-                    int rijnr = jouwStuk.rij + rij;
-                    int columnnr = jouwStuk.column + column;
-                    if (rijnr < 0 || rijnr > 6) continue;
-                    if (columnnr< 0 || columnnr > 6) continue;
-                    if (bord.BordLijst[rijnr, columnnr] == null)
-                        validPlekken.Add(new Coordinaat(rijnr, columnnr));
-                }
+            var stukken = bord.AangrenzendeStukken(jouwStuk);
+            foreach (var stuk in stukken) 
+                if(bord.BordLijst[stuk.rij, stuk.column] == null) validPlekken.Add(stuk);
         }
         foreach (var plek in validPlekken)
             if (plek.Equals(c)) return true;

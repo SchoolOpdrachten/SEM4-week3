@@ -26,6 +26,12 @@ public class Bord
     public string PlaatsInBord(Coordinaat c, string character)
     {
         BordLijst[c.rij, c.column] = character;
+        var aangrenzende = AangrenzendeStukken(c);
+        foreach (var plek in aangrenzende)
+        {
+            if (BordLijst[plek.rij, plek.column] == character || BordLijst[plek.rij, plek.column] == null) continue;
+            BordLijst[plek.rij, plek.column] = character;
+        }
         return "gezet";
     }
 
@@ -59,6 +65,21 @@ public class Bord
         for (var i = 0; i < columnLengte; i++)
             column[i] = BordLijst[columnnr, i];
         return column;
+    }
+
+    public List<Coordinaat> AangrenzendeStukken(Coordinaat c)
+    {
+        var stukken = new List<Coordinaat>();
+        for (int rij = -1; rij < 2; rij++)
+            for (int column = -1; column < 2; column++)
+            {
+                int rijnr = c.rij + rij;
+                int columnnr = c.column + column;
+                if (rijnr < 0 || rijnr > 6) continue;
+                if (columnnr < 0 || columnnr > 6) continue;
+                stukken.Add(new Coordinaat(rijnr, columnnr));
+            }
+        return stukken;
     }
 
     public List<Coordinaat> JouwStukken(string character)
