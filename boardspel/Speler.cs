@@ -18,7 +18,7 @@ public class Speler
         Coordinaat van = vraagCoordinaat();
         Console.WriteLine("Naar: ");
         Coordinaat naar = vraagCoordinaat();
-        if (isValidePlek(naar, bord) && isJouwVak(van, bord))
+        if (isValideSprong(van, naar, bord) && isJouwVak(van, bord))
         {
             return bord.VerplaatsZet(van, naar, character);
         }
@@ -52,6 +52,14 @@ public class Speler
         int x = int.Parse(Console.ReadLine());
         Coordinaat coordinaat = new Coordinaat(y, x);
         return coordinaat;
+    }
+
+    private bool isValideSprong(Coordinaat van, Coordinaat naar, Bord bord) {
+        if (Math.Abs(van.rij - naar.rij) <= 2 && Math.Abs(van.column - naar.column) <= 2) 
+            if(!isValidePlek(naar, bord))
+                return true;
+        
+        return false;
     }
 
     private bool isValidePlek(Coordinaat c, Bord bord)
