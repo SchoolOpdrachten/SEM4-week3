@@ -1,19 +1,32 @@
 
 public class Robot : Speler
 {
-
-    public Robot(string character) : base("ROBOT", character) { }
-
+    private bool Slim { get; set; }
+    public Robot(string naam, string character) : base($"ROBOT {naam}", character)
+    {
+        if (naam.ToLower() == "slim" || naam.ToLower() == "s") Slim = true;
+        else Slim = false;
+    }
+    
     internal void RobotMove(Bord bord)
     {
         var alleMogelijkKopieStukken = MogelijkeKopieStukken(bord);
         var alleMogelijkSprongStukken = MogelijkeSprongStukken(bord, alleMogelijkKopieStukken);
+        if (Slim) SlimmeRobot(bord, alleMogelijkKopieStukken, alleMogelijkSprongStukken);
+        else willekeurigeRobot(bord, alleMogelijkKopieStukken, alleMogelijkSprongStukken);
+    }
 
+    private void SlimmeRobot(Bord bord, List<Coordinaat> alleMogelijkKopieStukken, List<Tuple<Coordinaat, Coordinaat>> alleMogelijkSprongStukken)
+    {
+        
+    }
+    private void willekeurigeRobot(Bord bord, List<Coordinaat> alleMogelijkKopieStukken, List<Tuple<Coordinaat, Coordinaat>> alleMogelijkSprongStukken)
+    {
         var random = new Random();
         var gelukt = false;
         while (!gelukt)
         {
-            if (random.Next() %2 == 0 || alleMogelijkSprongStukken.Count == 0)
+            if (random.Next() % 2 == 0 || alleMogelijkSprongStukken.Count == 0)
             {
                 int randomNummer = random.Next(0, alleMogelijkKopieStukken.Count - 1);
                 gelukt = this.kopieerZet(bord, alleMogelijkKopieStukken[randomNummer]);

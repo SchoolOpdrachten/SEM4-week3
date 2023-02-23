@@ -16,7 +16,7 @@ public class Speler
     {
         if (bord.isValideSprong(van, naar, character) && isJouwVak(van, bord))
         {
-            return bord.VerplaatsZet(van, naar, character);
+            return bord.VerplaatsZet(van, naar, this);
         }
         return false;
     }
@@ -33,7 +33,7 @@ public class Speler
     {
         if (bord.isValidePlek(coordinaat, character))
         {
-            return bord.PlaatsInBord(coordinaat, character);
+            return bord.PlaatsInBord(coordinaat, this);
         }
         return false;
     }

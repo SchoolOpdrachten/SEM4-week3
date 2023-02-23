@@ -3,15 +3,19 @@ using System.Collections;
 public class Bord
 {
     public string[,] BordLijst { get; set; }
+    public Stapel<string[,]> stapel { get; set; }
+    public const int GROOTTE = 7;
 
     public Bord()
     {
-        BordLijst = initBord(7);
+        stapel = new Stapel<string[,]>();
+        BordLijst = initBord();
+        stapel.duw(BordLijst);
     }
 
-    public string[,] initBord(int grootte)
+    public string[,] initBord()
     {
-        var lijst = new string[grootte, grootte];
+        var lijst = new string[GROOTTE, GROOTTE];
         lijst[6, 0] = "H";
         lijst[6, 1] = "H";
         lijst[5, 0] = "H";
@@ -22,7 +26,6 @@ public class Bord
         lijst[1, 6] = "B";
         return lijst;
     }
-
 
     public bool isValideSprong(Coordinaat van, Coordinaat naar, string character)
     {
@@ -50,15 +53,43 @@ public class Bord
         return false;
     }
 
-    public bool PlaatsInBord(Coordinaat c, string character)
+    public bool StapTerug()
     {
-        BordLijst[c.rij, c.column] = character;
+        var lijst = stapel.pak();
+        if (lijst == null) return false;
+        BordLijst = lijst;
+        return true;
+    }
+
+    public bool PlaatsInBord(Coordinaat c, Speler speler)
+    {
+        var nieuwBord = BordLijst.Clone() as string[,];
+
+        nieuwBord[c.rij, c.column] = speler.character;
         var aangrenzende = AangrenzendeStukken(c);
         foreach (var plek in aangrenzende)
         {
-            if (BordLijst[plek.rij, plek.column] == character || BordLijst[plek.rij, plek.column] == null) continue;
-            BordLijst[plek.rij, plek.column] = character;
+            if (nieuwBord[plek.rij, plek.column] == speler.character || nieuwBord[plek.rij, plek.column] == null) continue;
+            nieuwBord[plek.rij, plek.column] = speler.character;
         }
+        if (speler is not Robot) stapel.duw(nieuwBord);
+        BordLijst = nieuwBord;
+        return true;
+    }
+    internal bool VerplaatsZet(Coordinaat van, Coordinaat naar, Speler speler)
+    {
+        var nieuwBord = BordLijst.Clone() as string[,];
+        nieuwBord[van.rij, van.column] = null;
+
+        nieuwBord[naar.rij, naar.column] = speler.character;
+        var aangrenzende = AangrenzendeStukken(naar);
+        foreach (var plek in aangrenzende)
+        {
+            if (nieuwBord[plek.rij, plek.column] == speler.character || nieuwBord[plek.rij, plek.column] == null) continue;
+            nieuwBord[plek.rij, plek.column] = speler.character;
+        }
+        if (speler is not Robot) stapel.duw(nieuwBord);
+        BordLijst = nieuwBord;
         return true;
     }
 
@@ -151,11 +182,6 @@ public class Bord
         Console.BackgroundColor = ConsoleColor.Black;
     }
 
-    internal bool VerplaatsZet(Coordinaat van, Coordinaat naar, string character)
-    {
-        BordLijst[van.rij, van.column] = null;
-        return PlaatsInBord(naar, character);
-    }
 
     internal string getWinnaar()
     {

@@ -10,7 +10,7 @@ public class Stapel<T>
     public T? pak()
     {
         if (bovenste == null)
-            throw new Exception("Stapel is leeg");
+            return default(T);
         Item pak = bovenste;
         bovenste = bovenste.vorige;
         return pak.waarde;

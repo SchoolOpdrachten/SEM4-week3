@@ -10,7 +10,7 @@ foreach (var i in new string[] { "H", "B" })
     var spelerNaam = Console.ReadLine();
     // var spelerNaam = "robot";
     if (spelerNaam.ToLower() == "robot")
-        spelers.Add(new Robot(i));
+        spelers.Add(new Robot("willekeurig", i));
     else spelers.Add(new Speler(spelerNaam, i));
 }
 Console.Clear();
@@ -34,16 +34,24 @@ for (int i = 0; i < 200; i++)
                 var robot = (Robot)speler;
                 robot.RobotMove(bord);
                 bord.PrintBord();
-                // Thread.Sleep(10);
+                // Thread.Sleep(100);
                 continue;
             }
+
+            // speler is aan de beurt
             bord.PrintBord();
             Console.WriteLine($"speler: {speler.Naam}");
-            Console.WriteLine($"[V]erplaats of [K]opieer je kledingstuk {speler.character}");
-            string keuze = Console.ReadLine();
             bool zetGelukt = false;
             while (!zetGelukt)
             {
+                Console.WriteLine($"[V]erplaats of [K]opieer je kledingstuk {speler.character} of neem een [S]tap [T]erug");
+                string keuze = Console.ReadLine();
+                if (keuze.ToLower() == "t" || keuze.ToLower() == "s" || keuze.ToLower() == "terug")
+                {
+                    bord.StapTerug();
+                    // Console.Clear();
+                    bord.PrintBord();
+                }
                 if (keuze.ToLower() == "v" || keuze.ToLower() == "verplaats")
                 {
                     var van = Gebruiker.vraagCoordinaat();
@@ -55,8 +63,8 @@ for (int i = 0; i < 200; i++)
                     var coordinaat = Gebruiker.vraagCoordinaat();
                     zetGelukt = speler.kopieerZet(bord, coordinaat);
                 }
-                Console.WriteLine(zetGelukt ? "gezet" : "zet is ongeldig");
             }
+            Console.WriteLine(zetGelukt ? "" : "ongeldig");
         }
     }
     bord.PrintBord();
@@ -66,6 +74,6 @@ for (int i = 0; i < 200; i++)
     if (winnaar == "gelijkspel") gelijkspel++;
     Console.WriteLine($"GG {winnaar}");
     Console.ReadKey();
-    bord.BordLijst = bord.initBord(7);
+    bord.BordLijst = bord.initBord();
 }
 Console.WriteLine($"H: {HWin}, B: {BWin}, Gelijkspel: {gelijkspel}");
