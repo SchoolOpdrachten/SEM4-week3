@@ -27,16 +27,15 @@ public class Bord
     public bool isValideSprong(Coordinaat van, Coordinaat naar, string character)
     {
         if (Math.Abs(van.rij - naar.rij) <= 2 && Math.Abs(van.column - naar.column) <= 2)
-            if (!isValidePlek(naar, character))
+            if (BordLijst[naar.rij, naar.column] == null)
                 return true;
-
         return false;
     }
 
     public bool isValidePlek(Coordinaat c, string character)
     {
-        if (BordLijst[c.rij, c.column] != null) return false;
         if (c.rij < 0 || c.column < 0 || c.rij > BordLijst.GetLength(0) - 1 || c.column > BordLijst.GetLength(1) - 1) return false;
+        if (BordLijst[c.rij, c.column] != null) return false;
 
         var jouwStukken = JouwStukken(character);
         var validPlekken = new List<Coordinaat>();

@@ -7,8 +7,8 @@ List<Speler> spelers = new List<Speler>();
 foreach (var i in new string[] { "H", "B" })
 {
     Console.WriteLine($"Speler {i} naam: ");
-    // var spelerNaam = Console.ReadLine();
-    var spelerNaam = "robot";
+    var spelerNaam = Console.ReadLine();
+    // var spelerNaam = "robot";
     if (spelerNaam.ToLower() == "robot")
         spelers.Add(new Robot(i));
     else spelers.Add(new Speler(spelerNaam, i));
@@ -19,7 +19,7 @@ bool spelKlaar = false;
 int HWin = 0;
 int BWin = 0;
 int gelijkspel = 0;
-for (int i = 0; i < 100; i++)
+for (int i = 0; i < 200; i++)
 {
     spelKlaar = false;
     while (!spelKlaar)
@@ -34,7 +34,7 @@ for (int i = 0; i < 100; i++)
                 var robot = (Robot)speler;
                 robot.RobotMove(bord);
                 bord.PrintBord();
-                Thread.Sleep(10);
+                // Thread.Sleep(10);
                 continue;
             }
             bord.PrintBord();
@@ -64,6 +64,8 @@ for (int i = 0; i < 100; i++)
     if (winnaar == "H") HWin++;
     if (winnaar == "B") BWin++;
     if (winnaar == "gelijkspel") gelijkspel++;
-    Console.WriteLine($"GG {winnaar}, {i}");
+    Console.WriteLine($"GG {winnaar}");
+    Console.ReadKey();
+    bord.BordLijst = bord.initBord(7);
 }
 Console.WriteLine($"H: {HWin}, B: {BWin}, Gelijkspel: {gelijkspel}");
