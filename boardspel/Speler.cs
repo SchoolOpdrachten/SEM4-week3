@@ -12,12 +12,8 @@ public class Speler
         this.character = character;
     }
 
-    public bool zetStap(Bord bord)
+    public bool zetStap(Bord bord, Coordinaat van, Coordinaat naar)
     {
-        Console.WriteLine("Van: ");
-        Coordinaat van = vraagCoordinaat();
-        Console.WriteLine("Naar: ");
-        Coordinaat naar = vraagCoordinaat();
         if (bord.isValideSprong(van, naar, character) && isJouwVak(van, bord))
         {
             return bord.VerplaatsZet(van, naar, character);
@@ -28,15 +24,13 @@ public class Speler
     private bool isJouwVak(Coordinaat van, Bord bord)
     {
         var jouwStukken = bord.JouwStukken(character);
-        foreach (var vak in jouwStukken) 
+        foreach (var vak in jouwStukken)
             if (vak.Equals(van)) return true;
         return false;
     }
 
-    public bool kopieerZet(Bord bord)
+    public bool kopieerZet(Bord bord, Coordinaat coordinaat)
     {
-        Coordinaat coordinaat = vraagCoordinaat();
-
         if (bord.isValidePlek(coordinaat, character))
         {
             return bord.PlaatsInBord(coordinaat, character);

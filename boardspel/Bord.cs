@@ -23,26 +23,28 @@ public class Bord
         return lijst;
     }
 
-    
-    public bool isValideSprong(Coordinaat van, Coordinaat naar, string character) {
-        if (Math.Abs(van.rij - naar.rij) <= 2 && Math.Abs(van.column - naar.column) <= 2) 
-            if(!isValidePlek(naar, character))
+
+    public bool isValideSprong(Coordinaat van, Coordinaat naar, string character)
+    {
+        if (Math.Abs(van.rij - naar.rij) <= 2 && Math.Abs(van.column - naar.column) <= 2)
+            if (!isValidePlek(naar, character))
                 return true;
-        
+
         return false;
     }
 
     public bool isValidePlek(Coordinaat c, string character)
     {
         if (BordLijst[c.rij, c.column] != null) return false;
+        if (c.rij < 0 || c.column < 0 || c.rij > BordLijst.GetLength(0) - 1 || c.column > BordLijst.GetLength(1) - 1) return false;
 
         var jouwStukken = JouwStukken(character);
         var validPlekken = new List<Coordinaat>();
         foreach (var jouwStuk in jouwStukken)
         {
             var stukken = AangrenzendeStukken(jouwStuk);
-            foreach (var stuk in stukken) 
-                if(BordLijst[stuk.rij, stuk.column] == null) validPlekken.Add(stuk);
+            foreach (var stuk in stukken)
+                if (BordLijst[stuk.rij, stuk.column] == null) validPlekken.Add(stuk);
         }
         foreach (var plek in validPlekken)
             if (plek.Equals(c)) return true;
@@ -61,8 +63,23 @@ public class Bord
         return true;
     }
 
-    public bool spelKlaar()
+    public bool spelKlaar(string character)
     {
+        bool spelKlaar = false;
+        int mogelijkheid = 0;
+        for (int row = 0; row < BordLijst.GetLength(0); row++)
+        {
+            for (int column = 0; column < BordLijst.GetLength(1); column++)
+            {
+                if (isValidePlek(new Coordinaat(row, column), character))
+                {
+                    mogelijkheid++;
+                    break;
+                }
+            }
+            if (mogelijkheid > 0) break;
+        }
+
         int aantalH = 0;
         int aantalB = 0;
         int aantalLeeg = 0;
@@ -73,9 +90,8 @@ public class Bord
                 if (BordLijst[row, column] == "B") aantalB++;
                 if (BordLijst[row, column] == null) aantalLeeg++;
             }
-        if (aantalH == 0 || aantalB == 0 || aantalLeeg == 0) return true;
-
-        return false;
+        if (aantalH == 0 || aantalB == 0 || aantalLeeg == 0 || mogelijkheid == 0) spelKlaar = true;
+        return spelKlaar;
     }
 
     public List<Coordinaat> AangrenzendeStukken(Coordinaat c)
@@ -140,5 +156,20 @@ public class Bord
     {
         BordLijst[van.rij, van.column] = null;
         return PlaatsInBord(naar, character);
+    }
+
+    internal string getWinnaar()
+    {
+        int aantalH = 0;
+        int aantalB = 0;
+        for (int row = 0; row < BordLijst.GetLength(0); row++)
+            for (int column = 0; column < BordLijst.GetLength(1); column++)
+            {
+                if (BordLijst[row, column] == "H") aantalH++;
+                if (BordLijst[row, column] == "B") aantalB++;
+            }
+        if (aantalH == aantalB) return "gelijkspel";
+        else if (aantalH < aantalB) return "B";
+        else return "H";
     }
 }
