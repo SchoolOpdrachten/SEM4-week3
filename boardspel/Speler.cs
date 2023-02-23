@@ -12,7 +12,7 @@ public class Speler
         this.character = character;
     }
 
-    public string zetStap(Bord bord)
+    public bool zetStap(Bord bord)
     {
         Console.WriteLine("Van: ");
         Coordinaat van = vraagCoordinaat();
@@ -22,7 +22,7 @@ public class Speler
         {
             return bord.VerplaatsZet(van, naar, character);
         }
-        return "geen valide plek om te verplaatsen";
+        return false;
     }
 
     private bool isJouwVak(Coordinaat van, Bord bord)
@@ -33,7 +33,7 @@ public class Speler
         return false;
     }
 
-    public string kopieerZet(Bord bord)
+    public bool kopieerZet(Bord bord)
     {
         Coordinaat coordinaat = vraagCoordinaat();
 
@@ -41,7 +41,7 @@ public class Speler
         {
             return bord.PlaatsInBord(coordinaat, character);
         }
-        return "geen valide plek om te plaatsen";
+        return false;
     }
 
     private static Coordinaat vraagCoordinaat()
