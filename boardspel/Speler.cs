@@ -18,7 +18,7 @@ public class Speler
         Coordinaat van = vraagCoordinaat();
         Console.WriteLine("Naar: ");
         Coordinaat naar = vraagCoordinaat();
-        if (isValideSprong(van, naar, bord) && isJouwVak(van, bord))
+        if (bord.isValideSprong(van, naar, character) && isJouwVak(van, bord))
         {
             return bord.VerplaatsZet(van, naar, character);
         }
@@ -37,7 +37,7 @@ public class Speler
     {
         Coordinaat coordinaat = vraagCoordinaat();
 
-        if (isValidePlek(coordinaat, bord))
+        if (bord.isValidePlek(coordinaat, character))
         {
             return bord.PlaatsInBord(coordinaat, character);
         }
@@ -52,30 +52,5 @@ public class Speler
         int x = int.Parse(Console.ReadLine());
         Coordinaat coordinaat = new Coordinaat(y, x);
         return coordinaat;
-    }
-
-    private bool isValideSprong(Coordinaat van, Coordinaat naar, Bord bord) {
-        if (Math.Abs(van.rij - naar.rij) <= 2 && Math.Abs(van.column - naar.column) <= 2) 
-            if(!isValidePlek(naar, bord))
-                return true;
-        
-        return false;
-    }
-
-    private bool isValidePlek(Coordinaat c, Bord bord)
-    {
-        if (bord.BordLijst[c.rij, c.column] != null) return false;
-
-        var jouwStukken = bord.JouwStukken(character);
-        var validPlekken = new List<Coordinaat>();
-        foreach (var jouwStuk in jouwStukken)
-        {
-            var stukken = bord.AangrenzendeStukken(jouwStuk);
-            foreach (var stuk in stukken) 
-                if(bord.BordLijst[stuk.rij, stuk.column] == null) validPlekken.Add(stuk);
-        }
-        foreach (var plek in validPlekken)
-            if (plek.Equals(c)) return true;
-        return false;
     }
 }

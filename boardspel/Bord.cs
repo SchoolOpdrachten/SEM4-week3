@@ -23,7 +23,33 @@ public class Bord
         return lijst;
     }
 
-    public string PlaatsInBord(Coordinaat c, string character)
+    
+    public bool isValideSprong(Coordinaat van, Coordinaat naar, string character) {
+        if (Math.Abs(van.rij - naar.rij) <= 2 && Math.Abs(van.column - naar.column) <= 2) 
+            if(!isValidePlek(naar, character))
+                return true;
+        
+        return false;
+    }
+
+    public bool isValidePlek(Coordinaat c, string character)
+    {
+        if (BordLijst[c.rij, c.column] != null) return false;
+
+        var jouwStukken = JouwStukken(character);
+        var validPlekken = new List<Coordinaat>();
+        foreach (var jouwStuk in jouwStukken)
+        {
+            var stukken = AangrenzendeStukken(jouwStuk);
+            foreach (var stuk in stukken) 
+                if(BordLijst[stuk.rij, stuk.column] == null) validPlekken.Add(stuk);
+        }
+        foreach (var plek in validPlekken)
+            if (plek.Equals(c)) return true;
+        return false;
+    }
+
+    public bool PlaatsInBord(Coordinaat c, string character)
     {
         BordLijst[c.rij, c.column] = character;
         var aangrenzende = AangrenzendeStukken(c);
@@ -32,39 +58,24 @@ public class Bord
             if (BordLijst[plek.rij, plek.column] == character || BordLijst[plek.rij, plek.column] == null) continue;
             BordLijst[plek.rij, plek.column] = character;
         }
-        return "gezet";
+        return true;
     }
 
     public bool spelKlaar()
     {
         int aantalH = 0;
         int aantalB = 0;
+        int aantalLeeg = 0;
         for (int row = 0; row < BordLijst.GetLength(0); row++)
             for (int column = 0; column < BordLijst.GetLength(1); column++)
             {
                 if (BordLijst[row, column] == "H") aantalH++;
                 if (BordLijst[row, column] == "B") aantalB++;
+                if (BordLijst[row, column] == null) aantalLeeg++;
             }
-        if (aantalH == 0 || aantalB == 0) return true;
+        if (aantalH == 0 || aantalB == 0 || aantalLeeg == 0) return true;
+
         return false;
-    }
-
-    private string[] getRow(int rijnr)
-    {
-        int rijLengte = BordLijst.GetLength(0);
-        string[] rij = new string[rijLengte];
-        for (var i = 0; i < rijLengte; i++)
-            rij[i] = BordLijst[rijnr, i];
-        return rij;
-    }
-
-    private string[] getColumn(int columnnr)
-    {
-        int columnLengte = BordLijst.GetLength(0);
-        string[] column = new string[columnLengte];
-        for (var i = 0; i < columnLengte; i++)
-            column[i] = BordLijst[columnnr, i];
-        return column;
     }
 
     public List<Coordinaat> AangrenzendeStukken(Coordinaat c)
@@ -100,24 +111,32 @@ public class Bord
     {
         for (int i = 0; i < BordLijst.GetLength(0); i++)
         {
-            if (i == 0) Console.Write("   ");
-            Console.Write($" {i} |");
+            if (i == 0) Console.Write("  ");
+            Console.Write($" {i} ");
         }
         Console.WriteLine();
         for (int i = 0; i < BordLijst.GetLength(0); i++)
         {
-            Console.Write($"{i} |");
+            Console.Write($"{i} ");
             for (int j = 0; j < BordLijst.GetLength(1); j++)
             {
+                Console.BackgroundColor = ConsoleColor.White;
                 if (BordLijst[i, j] == null)
-                    Console.Write(" - |");
-                else Console.Write(String.Format(" {0} |", BordLijst[i, j]));
+                    Console.Write(" - ");
+                else
+                {
+                    if (BordLijst[i, j] == "H") Console.BackgroundColor = ConsoleColor.Blue;
+                    if (BordLijst[i, j] == "B") Console.BackgroundColor = ConsoleColor.Red;
+                    Console.Write(String.Format(" {0} ", BordLijst[i, j]));
+                }
             }
+            Console.BackgroundColor = ConsoleColor.Black;
             Console.WriteLine();
         }
+        Console.BackgroundColor = ConsoleColor.Black;
     }
 
-    internal string VerplaatsZet(Coordinaat van, Coordinaat naar, string character)
+    internal bool VerplaatsZet(Coordinaat van, Coordinaat naar, string character)
     {
         BordLijst[van.rij, van.column] = null;
         return PlaatsInBord(naar, character);
