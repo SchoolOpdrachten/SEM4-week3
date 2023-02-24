@@ -66,14 +66,9 @@ public class Bord
         var nieuwBord = BordLijst.Clone() as string[,];
 
         nieuwBord[c.rij, c.column] = speler.character;
-        var aangrenzende = AangrenzendeStukken(c);
-        foreach (var plek in aangrenzende)
-        {
-            if (nieuwBord[plek.rij, plek.column] == speler.character || nieuwBord[plek.rij, plek.column] == null) continue;
-            nieuwBord[plek.rij, plek.column] = speler.character;
-        }
-        if (speler is not Robot) stapel.duw(nieuwBord);
-        BordLijst = nieuwBord;
+        var bord = Infect(c, speler, nieuwBord);
+        if (speler is not Robot) stapel.duw(BordLijst);
+        BordLijst = bord;
         return true;
     }
     internal bool VerplaatsZet(Coordinaat van, Coordinaat naar, Speler speler)
@@ -82,15 +77,21 @@ public class Bord
         nieuwBord[van.rij, van.column] = null;
 
         nieuwBord[naar.rij, naar.column] = speler.character;
+        var bord = Infect(naar, speler, nieuwBord);
+        if (speler is not Robot) stapel.duw(BordLijst);
+        BordLijst = bord;
+        return true;
+    }
+
+    private string[,] Infect(Coordinaat naar, Speler speler, string[,]? nieuwBord)
+    {
         var aangrenzende = AangrenzendeStukken(naar);
         foreach (var plek in aangrenzende)
         {
             if (nieuwBord[plek.rij, plek.column] == speler.character || nieuwBord[plek.rij, plek.column] == null) continue;
             nieuwBord[plek.rij, plek.column] = speler.character;
         }
-        if (speler is not Robot) stapel.duw(nieuwBord);
-        BordLijst = nieuwBord;
-        return true;
+        return nieuwBord;
     }
 
     public bool spelKlaar(string character)
