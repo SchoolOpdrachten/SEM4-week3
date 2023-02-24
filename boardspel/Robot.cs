@@ -11,7 +11,7 @@ public class Robot : Speler
     internal void RobotMove(Bord bord)
     {
         var alleMogelijkKopieStukken = MogelijkeKopieStukken(bord);
-        var alleMogelijkSprongStukken = MogelijkeSprongStukken(bord, alleMogelijkKopieStukken);
+        var alleMogelijkSprongStukken = MogelijkeSprongStukken(bord);
         if (Slim) SlimmeRobot(bord, alleMogelijkKopieStukken, alleMogelijkSprongStukken);
         else willekeurigeRobot(bord, alleMogelijkKopieStukken, alleMogelijkSprongStukken);
     }
@@ -49,8 +49,10 @@ public class Robot : Speler
                 maxInfects = aantalInfect;
             }
         }
-        if (besteZet == null) 
-            besteZet = alleMogelijkheden[new Random().Next(0, Math.Abs(alleMogelijkheden.Count-1))];
+        if (besteZet == null) {
+            int nummer = new Random().Next(0, alleMogelijkheden.Count - 1);
+            besteZet = alleMogelijkheden[nummer];
+        }
         return Tuple.Create(besteZet, maxInfects);
     }
 
@@ -73,14 +75,13 @@ public class Robot : Speler
         }
     }
 
-    private List<Tuple<Coordinaat, Coordinaat>> MogelijkeSprongStukken(Bord bord, List<Coordinaat> alleMogelijkKopieStukken)
+    private List<Tuple<Coordinaat, Coordinaat>> MogelijkeSprongStukken(Bord bord)
     {
         var alleMogelijkSprongStukken = new List<Tuple<Coordinaat, Coordinaat>>();
-        var test = (new Coordinaat(1, 1), new Coordinaat(2, 2));
         foreach (var stuk in bord.JouwStukken(character))
-            foreach (var kopieStuk in alleMogelijkKopieStukken)
+            foreach (var kopieStuk in bord.AangrenzendeStukken(stuk))
                 foreach (var sprongStuk in bord.AangrenzendeStukken(kopieStuk))
-                    if (bord.isValideSprong(stuk, sprongStuk, character) && sprongStuk != kopieStuk && !bord.JouwStukken(character).Contains(sprongStuk) && !alleMogelijkSprongStukken.Contains(Tuple.Create(stuk, sprongStuk)) && !alleMogelijkKopieStukken.Contains(sprongStuk))
+                    if (bord.isValideSprong(stuk, sprongStuk, character) && sprongStuk != kopieStuk && bord.BordLijst[sprongStuk.rij, sprongStuk.column] == null && !alleMogelijkSprongStukken.Contains(Tuple.Create(stuk, sprongStuk)) && !bord.AangrenzendeStukken(stuk).Contains(sprongStuk))
                         alleMogelijkSprongStukken.Add(Tuple.Create(stuk, sprongStuk));
         return alleMogelijkSprongStukken;
     }

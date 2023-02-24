@@ -18,7 +18,7 @@ bool spelKlaar = false;
 int HWin = 0;
 int BWin = 0;
 int gelijkspel = 0;
-for (int i = 0; i < 200; i++)
+for (int i = 0; i < 100; i++)
 {
     spelKlaar = false;
     while (!spelKlaar)
@@ -33,7 +33,7 @@ for (int i = 0; i < 200; i++)
                 var robot = (Robot)speler;
                 robot.RobotMove(bord);
                 bord.PrintBord();
-                // Thread.Sleep(100);
+                Thread.Sleep(100);
                 continue;
             }
 
@@ -53,7 +53,9 @@ for (int i = 0; i < 200; i++)
                 }
                 if (keuze.ToLower() == "v" || keuze.ToLower() == "verplaats")
                 {
+                    System.Console.WriteLine("Van:");
                     var van = Gebruiker.vraagCoordinaat();
+                    System.Console.WriteLine("Naar:");
                     var naar = Gebruiker.vraagCoordinaat();
                     zetGelukt = speler.zetStap(bord, van, naar);
                 }
@@ -62,8 +64,9 @@ for (int i = 0; i < 200; i++)
                     var coordinaat = Gebruiker.vraagCoordinaat();
                     zetGelukt = speler.kopieerZet(bord, coordinaat);
                 }
+                Console.WriteLine(zetGelukt ? "" : "ongeldig");
             }
-            Console.WriteLine(zetGelukt ? "" : "ongeldig");
+            Console.Clear();
             bord.PrintBord();
             Thread.Sleep(1000);
         }
