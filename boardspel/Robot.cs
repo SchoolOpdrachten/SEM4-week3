@@ -7,7 +7,7 @@ public class Robot : Speler
         if (naam.ToLower() == "slim" || naam.ToLower() == "s") Slim = true;
         else Slim = false;
     }
-    
+
     internal void RobotMove(Bord bord)
     {
         var alleMogelijkKopieStukken = MogelijkeKopieStukken(bord);
@@ -18,8 +18,42 @@ public class Robot : Speler
 
     private void SlimmeRobot(Bord bord, List<Coordinaat> alleMogelijkKopieStukken, List<Tuple<Coordinaat, Coordinaat>> alleMogelijkSprongStukken)
     {
-        
+        var aantalKopieInfects = MeesteInfects(bord, alleMogelijkKopieStukken);
+        var sprongStukken = new List<Coordinaat>();
+        foreach(var sprongStuk in alleMogelijkSprongStukken) {
+            sprongStukken.Add(sprongStuk.Item2);
+        }
+        var aantalSprongInfects = MeesteInfects(bord, sprongStukken);
+        var sprong = alleMogelijkSprongStukken.Select(s => s).Where(s => s.Item2 == aantalSprongInfects.Item1).FirstOrDefault();
+
+        if (aantalKopieInfects.Item2 >= aantalSprongInfects.Item2) this.kopieerZet(bord, aantalKopieInfects.Item1);
+        else if (aantalKopieInfects.Item2 < aantalSprongInfects.Item2) this.zetStap(bord, sprong.Item1, sprong.Item2);
     }
+
+    private Tuple<Coordinaat, int> MeesteInfects(Bord bord, List<Coordinaat> alleMogelijkheden)
+    {
+        Coordinaat besteZet = null;
+        int maxInfects = 0;
+        foreach (var zet in alleMogelijkheden)
+        {
+            var aangrenzendeStukken = bord.AangrenzendeStukken(zet);
+            int aantalInfect = 0;
+            foreach (var aangrenzende in aangrenzendeStukken)
+            {
+                if (bord.BordLijst[aangrenzende.rij, aangrenzende.column] != this.character && bord.BordLijst[aangrenzende.rij, aangrenzende.column] != null)
+                    aantalInfect++;
+            }
+            if (aantalInfect > maxInfects)
+            {
+                besteZet = zet;
+                maxInfects = aantalInfect;
+            }
+        }
+        if (besteZet == null) 
+            besteZet = alleMogelijkheden[new Random().Next(0, Math.Abs(alleMogelijkheden.Count-1))];
+        return Tuple.Create(besteZet, maxInfects);
+    }
+
     private void willekeurigeRobot(Bord bord, List<Coordinaat> alleMogelijkKopieStukken, List<Tuple<Coordinaat, Coordinaat>> alleMogelijkSprongStukken)
     {
         var random = new Random();

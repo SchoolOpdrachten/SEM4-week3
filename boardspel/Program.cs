@@ -8,9 +8,8 @@ foreach (var i in new string[] { "H", "B" })
 {
     Console.WriteLine($"Speler {i} naam: ");
     var spelerNaam = Console.ReadLine();
-    // var spelerNaam = "robot";
-    if (spelerNaam.ToLower() == "robot")
-        spelers.Add(new Robot("willekeurig", i));
+    if (spelerNaam.ToLower().Split(" ")[0] == "robot")
+        spelers.Add(new Robot(spelerNaam.ToLower().Split(" ")[1], i));
     else spelers.Add(new Speler(spelerNaam, i));
 }
 Console.Clear();
@@ -40,7 +39,7 @@ for (int i = 0; i < 200; i++)
 
             // speler is aan de beurt
             bord.PrintBord();
-            Console.WriteLine($"speler: {speler.Naam}");
+            Console.WriteLine($"speler {speler.character}: {speler.Naam}");
             bool zetGelukt = false;
             while (!zetGelukt)
             {
@@ -65,6 +64,8 @@ for (int i = 0; i < 200; i++)
                 }
             }
             Console.WriteLine(zetGelukt ? "" : "ongeldig");
+            bord.PrintBord();
+            Thread.Sleep(1000);
         }
     }
     bord.PrintBord();
@@ -73,7 +74,7 @@ for (int i = 0; i < 200; i++)
     if (winnaar == "B") BWin++;
     if (winnaar == "gelijkspel") gelijkspel++;
     Console.WriteLine($"GG {winnaar}");
-    Console.ReadKey();
+    // Console.ReadKey();
     bord.BordLijst = bord.initBord();
 }
 Console.WriteLine($"H: {HWin}, B: {BWin}, Gelijkspel: {gelijkspel}");

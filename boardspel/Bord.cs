@@ -41,15 +41,12 @@ public class Bord
         if (BordLijst[c.rij, c.column] != null) return false;
 
         var jouwStukken = JouwStukken(character);
-        var validPlekken = new List<Coordinaat>();
         foreach (var jouwStuk in jouwStukken)
         {
             var stukken = AangrenzendeStukken(jouwStuk);
             foreach (var stuk in stukken)
-                if (BordLijst[stuk.rij, stuk.column] == null) validPlekken.Add(stuk);
+                if (BordLijst[stuk.rij, stuk.column] == null) return true;
         }
-        foreach (var plek in validPlekken)
-            if (plek.Equals(c)) return true;
         return false;
     }
 
@@ -75,7 +72,6 @@ public class Bord
     {
         var nieuwBord = BordLijst.Clone() as string[,];
         nieuwBord[van.rij, van.column] = null;
-
         nieuwBord[naar.rij, naar.column] = speler.character;
         var bord = Infect(naar, speler, nieuwBord);
         if (speler is not Robot) stapel.duw(BordLijst);
